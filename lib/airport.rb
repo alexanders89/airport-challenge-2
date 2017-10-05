@@ -2,16 +2,15 @@ class Airport
 
   attr_accessor :planes, :capacity
 
-  DEFAULT_CAPACITY = 20
-
-  def initialize(capacity = DEFAULT_CAPACITY)
+  def initialize(capacity)
     @planes = []
-    @default_capacity = capacity
+    @capacity = capacity
   end
 
   def land(plane)
     raise "Airport is full!" if full?
     raise 'Cannot land, stormy!' if stormy?
+    raise 'This plane is already landed' if plane.flying? == false
     @planes << plane
     plane
   end
@@ -23,7 +22,11 @@ class Airport
   end
 
   def stormy?
-    rand(0..10) > 7
+    rand(0..10) > 8
+  end
+
+  def change_capacity(new_capacity)
+    @capacity = new_capacity
   end
 
   # def capacity
@@ -31,7 +34,7 @@ class Airport
   # end
 
   def full?
-    @planes.count == DEFAULT_CAPACITY
+    @planes.count == @capacity
   end
 
 
