@@ -3,46 +3,61 @@ require './lib/airport'
 describe Airport do
   let(:plane) { double :plane}
 
-  context 'basics' do
+  describe 'basics' do
 
     it 'is initialized with an empty array of planes' do
       expect(subject.planes).to eq []
     end
 
     it 'landed planes show in the airport array of planes' do
-      subject.land(plane)
-      expect(subject.planes[0]).to eq plane
+      airport = Airport.new
+      allow(airport).to receive(:stormy?).and_return false
+      airport.land(plane)
+      expect(airport.planes[0]).to eq plane
     end
 
     it 'taken off planes are removed from array' do
-      subject.land(plane)
-      subject.take_off(plane)
-      expect(subject.planes.count).to eq 0
+      airport = Airport.new
+      allow(airport).to receive(:stormy?).and_return false
+      airport.land(plane)
+      airport.take_off(plane)
+      expect(airport.planes.count).to eq 0
     end
   end
 
-  context 'landing planes' do
+  describe 'landing planes' do
     it 'can land plane' do
-      expect(subject.land(plane)).to eq plane
+      airport = Airport.new
+      allow(airport).to receive(:stormy?).and_return false
+      expect(airport.land(plane)).to eq plane
     end
 
-    it 'will not allow landing when at capacity' do
-      20.times do
-        subject.land(plane)
+    context 'when at capacity' do
+        it 'will raise an error' do
+          airport = Airport.new
+          allow(airport).to receive(:stormy?).and_return false
+          20.times do
+            airport.land(plane)
+          end
+            expect { airport.land(plane) }.to raise_error "Airport is full!"
+        end
+    end
+
+    context 'when weather is stormy' do
+      it 'will not allow landing' do
+        airport = Airport.new
+        allow(airport).to receive(:stormy?).and_return true
+        expect { airport.land(plane) }.to raise_error 'Cannot land, stormy!'
       end
-      expect { subject.land(plane) }.to raise_error "Airport is full!"
-    end
-
-    it 'will not allow landing when the weather is stormy' do
-
     end
   end
 
-  context 'taking off planes' do
+  describe 'taking off planes' do
     it 'can take off a plane' do
-      subject.land(plane)
-      expect(subject.take_off(plane)).to eq plane
+      airport = Airport.new
+      allow(airport).to receive(:stormy?).and_return false
+      airport.land(plane)
+      expect(airport.take_off(plane)).to eq plane
     end
   end
-
 end

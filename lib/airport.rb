@@ -11,6 +11,7 @@ class Airport
 
   def land(plane)
     raise "Airport is full!" if full?
+    raise 'Cannot land, stormy!' if stormy?
     @planes << plane
     plane
   end
@@ -18,6 +19,10 @@ class Airport
   def take_off(plane)
     @planes.delete(plane)
     plane
+  end
+
+  def stormy?
+    rand(0..10) > 7
   end
 
   # def capacity
